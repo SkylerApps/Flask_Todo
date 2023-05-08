@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1 class="text-center">Welcome {{ current_user.email }} to your to-do list!</h1>
+  <hr>
+
+  <h2>Add New Task:</h2>
+  <form action="/create" method="post">
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Task</button>
+  </form>
+
+  <hr>
+
+  <h2>Your Tasks:</h2>
+  {% if todos %}
+  <ul class="list-group">
+    {% for todo in todos %}
+    <li class="list-group-item {% if todo.completed %}bg-success text-light{% endif %}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-column">
+          <h4>{{ todo.title }}</h4>
+          <p>{{ todo.description }}</p>
+        </div>
+        <div class="d-flex flex-column">
+          <form action="/update/{{ todo.id }}" method="post">
+            {% if todo.completed %}
+            <input type="hidden" name="completed" value="False">
+            <button type="submit" class="btn btn-warning">Mark Incomplete</button>
+            {% else %}
+            <input type="hidden" name="completed" value="True">
+            <button type="submit" class="btn btn-success">Mark Complete</button>
+            {% endif %}
+          </form>
+          <br>
+          <form action="/delete/{{ todo.id }}" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>You don't have any tasks yet. Add one above!</p>
+  {% endif %}
+</div>
+{% endblock %}
